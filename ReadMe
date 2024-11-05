@@ -1,0 +1,10 @@
+/set up docker mysql image and runs in docker container
+1 docker images
+2 docker pull mysql
+3 
+docker run --name mysql-social-media -p 3306:3306 -e MYSQL_ROOT_PASSWORD=dummypassword -e MYSQL_DATABASE=social-media-database -e MYSQL_USER=social-media-user -e MYSQL_PASSWORD=dummypassword -d mysql:latest
+
+4 docker into mysql server
+docker exec -it mysql-social-media bash
+mysql -u root -p social-media-database
+password:dummypassword
