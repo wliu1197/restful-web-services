@@ -111,6 +111,12 @@ public class UserDetails {
 	public void setPostDetailsList(List<PostDetails> postDetailsList) {
 		this.postDetailsList = postDetailsList;
 	}
+
+	@Override
+	public String toString() {
+		return "UserDetails [id=" + id + ", name=" + name + ", birthDate=" + birthDate + ", password=" + password
+				+ ", age=" + age + ", cancelledDate=" + cancelledDate + "]";
+	}
 	
 }
 

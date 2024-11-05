@@ -60,6 +60,11 @@ public class PostDetails {
 	public void setUserDetails(UserDetails userDetails) {
 		this.userDetails = userDetails;
 	}
+
+	@Override
+	public String toString() {
+		return "PostDetails [id=" + id + ", description=" + description + "]";
+	}
 	
 	
 }
