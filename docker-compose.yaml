@@ -1,0 +1,36 @@
+version: "3.7"
+services:
+ mysql-social-media:
+  image: mysql:latest
+  restart: always
+  container_name: mysql-social-media
+  ports:
+   - 3306:3306
+  networks:
+   - springapimysql-net  
+  environment:
+   MYSQL_DATABASE: social-media-database
+   MYSQL_USER: social-media-user
+   MYSQL_PASSWORD: dummypassword
+   MYSQL_ROOT_PASSWORD: dummypassword
+   
+ rest-web-services:
+  image: rest-web-services:v1
+  build: .
+  restart: always
+  container_name: rest-web-services
+  ports:
+   - 8081:8081
+  networks:
+   - springapimysql-net
+  environment:
+   - spring.datasource.url=jdbc:mysql://mysql-social-media:3306/social-media-database
+   - spring.datasource.username=root
+   - spring.datasource.password=dummypasswor
+  depends_on:
+   - mysql-social-media
+  volumes:
+   - .m2:/root/.m2
+
+networks:
+  springapimysql-net:

@@ -53,6 +53,21 @@ public class LoggingAspect {
         logger.info("@Before post action: " + request.getRequestURL() + " Payload " + payload);
     }
 	
+	@AfterReturning(
+			pointcut  = "execution(* com.rest.webservices.restful_web_services.controllers.*.*(..))",
+			returning = "resultValue"
+	)
+	public void logAfterSuccessReturn(JoinPoint joinPoint, Object resultValue) {
+		logger.info("@AfterReturning aspect: {} - result: {}",joinPoint,resultValue);
+	}
+	
+	@AfterThrowing(
+			pointcut  = "execution(* com.rest.webservices.restful_web_services.*.*.*(..))",
+			throwing  = "exception"
+	)
+	public void logAfterExceptions(JoinPoint joinPoint, Exception ex) {
+		logger.info("@AfterThrowing aspect: {} - ex: {}",joinPoint,ex.getMessage());
+	}
 	
 	private String getPayload(JoinPoint joinPoint) {
         CodeSignature signature = (CodeSignature) joinPoint.getSignature();
