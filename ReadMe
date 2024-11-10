@@ -1,4 +1,4 @@
-/set up docker mysql image and runs in docker container
+set up docker mysql image and runs in docker container
 1 docker images
 2 docker pull mysql
 3 
@@ -73,6 +73,9 @@ services:
    - mysql-social-media
   volumes:
    - .m2:/root/.m2
+   - type: bind
+     source: /Users/wenhaoliu/Desktop/interview preparing/SpringbootUdemy/restful-web-services/target/restful-web-services-0.0.1-SNAPSHOT.jar
+     target: /home/app/springboot.jar
 
 networks:
   springapimysql-net:
@@ -86,8 +89,17 @@ volumes: Named volumes that keeps our data alive after restart.
 network: The two services should be belong to one network.
 depends_on: Dependency order, mysqldb is started before app
 
+1 manually build the new jar file 
+mvn clean install -DskipTests
 
-2 docker-compose up
+2 use build --no-cache first if we don't set up type: bind (mount) source and target 
+as image already exist it won't rebuild image and copy new .jar to container
+docker-compose build --no-cache
+
+if we have use  above type: bind (mount) source and target in docker-compose.yaml 
+it will copy .jar to container when we run container so we can skip docker-compose build --no-cache 
+because existing image should be fine for us
+docker-compose up
 
 image pull from docker hub e.g: mysql:latest
 image created from our Dockerfile e.g: rest-web-services :v1
@@ -103,3 +115,11 @@ CONTAINER ID   IMAGE                                    COMMAND                 
 
 3 docker-compose down
 
+Note: if any changes made in Dockerfile or used mvn image as build to build jar file 
+it will require to build docker-compose build --no-cache first then run up
+docker-compose build --no-cache
+docker-compose up 
+
+
+Clean up <none><none> dangling images that uses a lot of memory 
+docker rmi $(docker images -f "dangling=true" -q)
