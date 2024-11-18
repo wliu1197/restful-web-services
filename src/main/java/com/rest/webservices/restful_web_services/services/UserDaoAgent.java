@@ -10,4 +10,5 @@ public interface UserDaoAgent {
 	UserDetails saveUser(UserDetails user);
 	void deleteById(int id);
 	String getAuthenticatedUser();
+	int getTotalNumberOfPostsByUserDetails(UserDetails user);
 }

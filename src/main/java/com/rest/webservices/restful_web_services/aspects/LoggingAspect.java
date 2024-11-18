@@ -1,6 +1,7 @@
 package com.rest.webservices.restful_web_services.aspects;
 
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.CodeSignature;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -53,6 +54,16 @@ public class LoggingAspect {
         logger.info("@Before post action: " + request.getRequestURL() + " Payload " + payload);
     }
 	
+/*	@Around("postAction()")
+	public Object logAroundPostAction(ProceedingJoinPoint joinPoint) throws Throwable {
+		String payload = getPayload(joinPoint);
+		logger.info("@Around before post action: " + request.getRequestURL() + " Payload: " + payload);
+		
+		Object result = joinPoint.proceed();
+	    logger.info("@Around after post action: " + request.getRequestURL() + " result: ", result);
+	    return result;
+	}
+*/	
 	@AfterReturning(
 			pointcut  = "execution(* com.rest.webservices.restful_web_services.controllers.*.*(..))",
 			returning = "resultValue"

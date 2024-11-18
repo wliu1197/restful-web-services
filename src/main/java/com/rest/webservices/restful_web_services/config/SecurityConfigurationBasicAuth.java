@@ -15,6 +15,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.servlet.config.annotation.*;
+
 
 @Configuration
 public class SecurityConfigurationBasicAuth {
@@ -25,7 +27,6 @@ public class SecurityConfigurationBasicAuth {
 	public void setAuthEntryPoint(AuthenticationEntryPoint authEntryPoint) {
 		this.authEntryPoint = authEntryPoint;
 	}
-
 
 	@Bean
     public BCryptPasswordEncoder encoder() {
@@ -65,6 +66,7 @@ public class SecurityConfigurationBasicAuth {
 		// 3 configure requests to be authenticated for uri path and roles users InMemoryUserDetailsManager
 		
 		http
+		.cors().and()
 		.csrf(csrf -> csrf.disable())
 		.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 		.authorizeHttpRequests(authz -> authz

@@ -24,6 +24,11 @@ import com.rest.webservices.restful_web_services.repositories.UserDetailsReposit
 public class UserDaoServiceImpl implements UserDaoAgent{
 	private UserDetailsRepository userDetailsRepository;
 	
+	@Autowired
+	public void setUserDetailsRepository(UserDetailsRepository userDetailsRepository) {
+		this.userDetailsRepository = userDetailsRepository;
+	}
+	
 	
 	@Override
 	public List<UserDetails> findAll(){
@@ -54,10 +59,12 @@ public class UserDaoServiceImpl implements UserDaoAgent{
 		return autthentication.getName();
 	}
 	
-	@Autowired
-	public void setUserDetailsRepository(UserDetailsRepository userDetailsRepository) {
-		this.userDetailsRepository = userDetailsRepository;
+	@Override
+	public int getTotalNumberOfPostsByUserDetails(UserDetails user) {
+		if(user.getPostDetailsList() == null) return 0;
+		return user.getPostDetailsList().size();
 	}
+	
 	
 
 	

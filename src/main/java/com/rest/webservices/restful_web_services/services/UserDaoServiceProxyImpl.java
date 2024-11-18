@@ -60,4 +60,9 @@ public class UserDaoServiceProxyImpl implements UserDaoAgent {
 		return autthentication.getName();
 	}
 	
+	@Override
+	public int getTotalNumberOfPostsByUserDetails(UserDetails user) {
+		return 0;
+	}
+	
 }
