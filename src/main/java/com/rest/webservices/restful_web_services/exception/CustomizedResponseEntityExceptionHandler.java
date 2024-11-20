@@ -21,6 +21,16 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 		return new ResponseEntity(errorDetails,HttpStatus.NOT_FOUND);
 	}
 	
+	//handler UserNotFoundException in our error dataDetails format
+	@ExceptionHandler(TodoNotFoundException.class)
+	public ResponseEntity<CustomErrorDetails> handleTodoNotFoundException(Exception ex, WebRequest request) throws Exception {
+		
+		CustomErrorDetails errorDetails = new CustomErrorDetails(ex.getMessage(), request.getDescription(false));
+		
+		return new ResponseEntity(errorDetails,HttpStatus.NOT_FOUND);
+	}
+		
+	
 	//handler all other exceptions in our error dataDetails format
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<CustomErrorDetails> handleAllOtherException(Exception ex, WebRequest request) throws Exception {

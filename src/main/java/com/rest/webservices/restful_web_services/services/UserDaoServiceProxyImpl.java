@@ -35,6 +35,11 @@ public class UserDaoServiceProxyImpl implements UserDaoAgent {
 	}
 	
 	@Override
+	public UserDetails findActiveUserByName(String name) {
+		return users.stream().filter(user-> name.equalsIgnoreCase(user.getName())).findFirst().get();
+	}
+	
+	@Override
 	public UserDetails saveUser(UserDetails user) {
 		if(!users.isEmpty()) {
 			user.setId(users.size()+1);

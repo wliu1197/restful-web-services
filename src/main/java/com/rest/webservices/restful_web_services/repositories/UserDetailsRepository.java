@@ -17,7 +17,7 @@ public interface UserDetailsRepository extends JpaRepository<UserDetails, Intege
 	UserDetails findActiveUserById(Integer id);
 	
 	@Query("FROM user_details u WHERE u.name = ?1 and u.cancelledDate is null")
-	List<UserDetails> findActiveUser(String name);
+	UserDetails findActiveUser(String name);
 	
 	@Query("FROM user_details u WHERE u.cancelledDate is null")
 	List<UserDetails> findAllActiveUser();

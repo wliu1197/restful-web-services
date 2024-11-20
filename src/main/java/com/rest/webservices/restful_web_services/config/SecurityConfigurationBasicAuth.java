@@ -61,9 +61,12 @@ public class SecurityConfigurationBasicAuth {
 	//Override default security filter chain
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		// 1 disable csrf so we can allow post or put request  
-		// 2 set basic auth as stateless
-		// 3 configure requests to be authenticated for uri path and roles users InMemoryUserDetailsManager
+		// 1 .cros().and() to allow cross-origin resource sharing so rest api can accept request from our react app
+		// in RestfulWebServicesApplication class I have added WebMvcConfigurer corsConfigurer() to configure that cros
+		// 2 disable csrf(Cross-Site Request Forgery) so we can allow post or put request  
+		// 3 set basic auth as stateless
+		// 4 configure requests to be authenticated for uri path and roles users InMemoryUserDetailsManager
+		
 		
 		http
 		.cors().and()

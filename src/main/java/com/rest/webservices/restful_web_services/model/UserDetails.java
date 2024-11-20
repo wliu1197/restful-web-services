@@ -47,6 +47,10 @@ public class UserDetails {
 	@OneToMany(mappedBy = "userDetails")
 	private List<PostDetails> postDetailsList;
 	
+	@JsonIgnore
+	@OneToMany(mappedBy = "userDetails")
+	private List<TodoDetails> todoDetailsList;
+	
 	public UserDetails() {
 		super();
 	}
@@ -54,6 +58,14 @@ public class UserDetails {
 	public UserDetails(String name, LocalDate birthDate, Integer age) {
 		super();
 		this.name = name;
+		this.birthDate = birthDate;
+		this.age = age;
+		this.cancelledDate = null;
+	}
+	public UserDetails(String name, String password, LocalDate birthDate, Integer age) {
+		super();
+		this.name = name;
+		this.password = password;
 		this.birthDate = birthDate;
 		this.age = age;
 		this.cancelledDate = null;
@@ -110,6 +122,15 @@ public class UserDetails {
 
 	public void setPostDetailsList(List<PostDetails> postDetailsList) {
 		this.postDetailsList = postDetailsList;
+	}
+	
+
+	public List<TodoDetails> getTodoDetailsList() {
+		return todoDetailsList;
+	}
+
+	public void setTodoDetailsList(List<TodoDetails> todoDetailsList) {
+		this.todoDetailsList = todoDetailsList;
 	}
 
 	@Override

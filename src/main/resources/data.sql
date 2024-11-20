@@ -29,3 +29,17 @@ values('anna f message',2);
 insert into
 post_details (description,user_details_id)
 values('anna second message',2);
+
+insert into
+todo_details (description,done,target_date,user_details_id)
+values('learn aws',false,'2025-01-10',1);
+insert into
+todo_details (description,done,target_date,user_details_id)
+values('learn spring',false,'2025-01-11',1);
+
+insert into
+todo_details (description,done,target_date,user_details_id)
+values('eat',false,'2025-01-10',2);
+insert into
+todo_details (description,done,target_date,user_details_id)
+values('sleep',false,'2025-01-11',2);

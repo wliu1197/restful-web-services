@@ -41,6 +41,11 @@ public class UserDaoServiceImpl implements UserDaoAgent{
 	}
 	
 	@Override
+	public UserDetails findActiveUserByName(String name) {
+		return userDetailsRepository.findActiveUser(name);
+	}
+	
+	@Override
 	public UserDetails saveUser(UserDetails user) {
 		return userDetailsRepository.save(user);
 	}

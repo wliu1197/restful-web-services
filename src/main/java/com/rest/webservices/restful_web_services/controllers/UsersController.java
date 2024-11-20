@@ -21,10 +21,14 @@ import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.rest.webservices.restful_web_services.exception.TodoNotFoundException;
 import com.rest.webservices.restful_web_services.exception.UserNotFoundException;
 import com.rest.webservices.restful_web_services.model.PostDetails;
+import com.rest.webservices.restful_web_services.model.TodoDetails;
 import com.rest.webservices.restful_web_services.model.UserDetails;
+import com.rest.webservices.restful_web_services.repositories.TodoDetailsRepository;
 import com.rest.webservices.restful_web_services.services.PostDaoAgent;
+import com.rest.webservices.restful_web_services.services.TodoDaoAgent;
 import com.rest.webservices.restful_web_services.services.UserDaoAgent;
 
 
@@ -36,14 +40,18 @@ public class UsersController {
 	
 	private UserDaoAgent userAgent;
 	private PostDaoAgent postAgent;
+	private TodoDaoAgent todoAgent;
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
+	//dependency injection
 	@Autowired
 	public UsersController(@Qualifier("UserDaoService")UserDaoAgent userAgent,
-			@Qualifier("PostDaoService")PostDaoAgent postAgent) {
+			@Qualifier("PostDaoService")PostDaoAgent postAgent
+			,TodoDaoAgent todoAgent) {
 		this.userAgent = userAgent;
 		this.postAgent = postAgent;
+		this.todoAgent = todoAgent;
 	}
 	
 	@GetMapping(path = "/users")
@@ -178,6 +186,55 @@ public class UsersController {
 		postAgent.savePost(postsDetails);
 	
 		return new ResponseEntity<PostDetails> (postsDetails,HttpStatus.CREATED);
+	}
+	
+	
+	@GetMapping(path = "/users/{username}/todos")
+	public ResponseEntity<List<TodoDetails>> getTodosByUsername(@PathVariable String username) {
+		UserDetails userDetails = userAgent.findActiveUserByName(username);
+		if(userDetails == null) {
+			throw new UserNotFoundException("Can't find user by username:" + username);
+		}
+		
+		return new ResponseEntity<List<TodoDetails>> (userDetails.getTodoDetailsList(),HttpStatus.OK);
+	}
+	
+	@GetMapping(path = "/users/{username}/todos/{id}")
+	public ResponseEntity<TodoDetails> getTodosByUsernameAndId(@PathVariable String username
+			,@PathVariable int id) {
+		UserDetails userDetails = userAgent.findActiveUserByName(username);
+		if(userDetails == null) {
+			throw new UserNotFoundException("Can't find user by username:" + username);
+		}
+		TodoDetails todoDetails = userDetails.getTodoDetailsList()
+								.stream().filter(todo-> todo.getId() == id)
+								.findFirst()
+								.orElse(null);
+		if(todoDetails == null) {
+			throw new TodoNotFoundException("Can't find user by username:" + username);
+		}
+		
+		return new ResponseEntity<TodoDetails> (todoDetails,HttpStatus.OK);
+	}
+	
+	@DeleteMapping(path = "/users/{username}/todos/{id}")
+	public ResponseEntity<Void> deleteTodoByUsernameAndTodoId(@PathVariable String username
+			,@PathVariable int id) {
+		UserDetails userDetails = userAgent.findActiveUserByName(username);
+		if(userDetails == null) {
+			throw new UserNotFoundException("Can't find user by username:" + username);
+		}
+		TodoDetails todoDetails = userDetails.getTodoDetailsList()
+								.stream().filter(todo-> todo.getId() == id)
+								.findFirst()
+								.orElse(null);
+		if(todoDetails == null) {
+			throw new TodoNotFoundException("Can't find todo for username:" + username + " with Todo id: " + id);
+		}
+		
+		todoAgent.deleteTodo(id);
+		
+		return ResponseEntity.noContent().build();
 	}
 	
 	
