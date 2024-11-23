@@ -33,7 +33,7 @@ public class TodoDetails {
 	private Boolean done;
 	
 	//if we don't use @JoinColumn annotation data jpa will automatically create user_details_id column for us
-	//@JoinColumn(name = "user_id", referencedColumnName = "id")
+	@JoinColumn(name = "user_id", referencedColumnName = "id")
 	@ManyToOne
 	@JsonIgnore
 	private UserDetails userDetails;
