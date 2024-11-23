@@ -15,12 +15,16 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.rest.webservices.restful_web_services.exception.TodoNotFoundException;
 import com.rest.webservices.restful_web_services.exception.UserNotFoundException;
 import com.rest.webservices.restful_web_services.model.PostDetails;
@@ -54,6 +58,16 @@ public class UsersController {
 		this.todoAgent = todoAgent;
 	}
 	
+	@GetMapping(path = "/basic-auth")
+	public ResponseEntity<Void> basicAuthCheckWhenLogin() {
+		//print authenticated Basic auth username
+		// MOVED this to aspect function
+		//logger.info("Basic Auth user: " + userAgent.getAuthenticatedUser());
+		
+		return ResponseEntity.noContent().build();
+	}
+	
+	
 	@GetMapping(path = "/users")
 	public List<UserDetails> getAllUsers() {
 		//print authenticated Basic auth username
@@ -82,6 +96,21 @@ public class UsersController {
 		WebMvcLinkBuilder linkBuilder = linkTo(methodOn(this.getClass()).getAllUsers());
 		userEntityModel.add(linkBuilder.withRel("all-users"));
 		return userEntityModel;
+	}
+	
+	/* dynamic filtering */
+	
+	@GetMapping(path = "/users/{id}/name-birthday")
+	public ResponseEntity<MappingJacksonValue> getNameAndBirthdayByUserId(@PathVariable int id) {
+		UserDetails userDetails = userAgent.findById(id);
+		if(userDetails == null) {
+			throw new UserNotFoundException("Can't find user by id:" + id);
+		}
+		MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(userDetails);
+		SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("name","birthDate");
+		FilterProvider fProvider= new SimpleFilterProvider().addFilter("userParamFilter",filter);
+		mappingJacksonValue.setFilters(fProvider);
+		return new ResponseEntity<MappingJacksonValue>(mappingJacksonValue, HttpStatus.OK);
 	}
 	
 	
@@ -235,6 +264,41 @@ public class UsersController {
 		todoAgent.deleteTodo(id);
 		
 		return ResponseEntity.noContent().build();
+	}
+	
+	@PutMapping(path = "/users/{username}/todos/{id}")
+	public ResponseEntity<TodoDetails> updateTodoByUsernameAndTodoId(@PathVariable String username
+			,@PathVariable int id ,@RequestBody TodoDetails todoRequest) {
+		UserDetails userDetails = userAgent.findActiveUserByName(username);
+		if(userDetails == null) {
+			throw new UserNotFoundException("Can't find user by username:" + username);
+		}
+		TodoDetails todoDetails = userDetails.getTodoDetailsList()
+								.stream().filter(todo-> todo.getId() == id)
+								.findFirst()
+								.orElse(null);
+		if(todoDetails == null) {
+			throw new TodoNotFoundException("Can't find todo for username:" + username + " with Todo id: " + id);
+		}
+		todoRequest.setUserDetails(userDetails);
+		todoRequest.setId(todoDetails.getId());
+		todoAgent.saveTodo(todoRequest);
+		
+		return new ResponseEntity<TodoDetails> (todoRequest,HttpStatus.OK);
+	}
+	
+	@PostMapping(path = "/users/{username}/todos")
+	public ResponseEntity<TodoDetails> createTodo(@PathVariable String username
+			,@RequestBody TodoDetails todoRequest) {
+		UserDetails userDetails = userAgent.findActiveUserByName(username);
+		if(userDetails == null) {
+			throw new UserNotFoundException("Can't find user by username:" + username);
+		}
+		
+		todoRequest.setUserDetails(userDetails);
+		todoAgent.saveTodo(todoRequest);
+		
+		return new ResponseEntity<TodoDetails> (todoRequest,HttpStatus.OK);
 	}
 	
 	

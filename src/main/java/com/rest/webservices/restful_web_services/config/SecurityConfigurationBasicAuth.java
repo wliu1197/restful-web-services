@@ -35,7 +35,8 @@ public class SecurityConfigurationBasicAuth {
 	
 	
 	//Configure Basic auth users and keep them in memory user InMemoryUserDetailsManager class
-	//We can get auth from db easily in this way
+	//We can get auth from db easily by using spring data jpa repository with our userdetail entity
+	//lazy to do it so hard code 2 users for now :)
 	@Bean
 	public InMemoryUserDetailsManager createDetailsManager() {
 		//users we can get it from DB By repository
@@ -47,9 +48,9 @@ public class SecurityConfigurationBasicAuth {
 				.build();
 		
 		UserDetails tester = User.builder()
-				.username("test")
+				.username("anna")
 				.password(encoder().encode("comein22"))
-				.roles("tester")
+				.roles("developer")
 				.build();
 		
 			

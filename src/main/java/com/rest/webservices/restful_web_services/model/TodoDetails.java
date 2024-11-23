@@ -98,8 +98,12 @@ public class TodoDetails {
 
 	@Override
 	public String toString() {
-		return "Todo [id=" + id + ", description=" + description + ", targetDate=" + targetDate + ", done=" + done
-				+ ", user=" + userDetails.getName() + "]";
+		if(userDetails != null) {
+			return "Todo [id=" + id + ", description=" + description + ", targetDate=" + targetDate + ", done=" + done
+				+  ", user=" + userDetails.getName() + "]";
+		}else {
+			return "Todo [id=" + id + ", description=" + description + ", targetDate=" + targetDate + ", done=" + done +"]";
+		}
 	}
 	
 }

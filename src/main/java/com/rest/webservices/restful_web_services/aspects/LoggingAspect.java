@@ -11,8 +11,11 @@ import java.lang.reflect.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.*;
+
+import com.rest.webservices.restful_web_services.services.UserDaoAgent;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -23,6 +26,9 @@ public class LoggingAspect {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired(required = false)
     private HttpServletRequest request;
+	@Autowired
+	@Qualifier("UserDaoService")
+	private UserDaoAgent userAgent;
 	
 	// pointcut -when we execute this log function
 	// execution(* PACKAGE.*.*(..)) - Which class and method we want to execute log
@@ -32,6 +38,11 @@ public class LoggingAspect {
 	@Before("execution(* com.rest.webservices.restful_web_services.controllers.*.*(..))")
 	public void logBusinessPackageMethodCall(JoinPoint joinPoint) {
 		logger.info("@before Aspect - logging uri {},  Method {} called, args: {}", request.getRequestURL(), joinPoint, joinPoint.getArgs());
+	}
+	
+	@Before("execution(* com.rest.webservices.restful_web_services.controllers.UsersController.basicAuthCheckWhenLogin(..))")
+	public void logBasicAuthLogin(JoinPoint joinPoint) {
+		logger.info("Basic Auth user: " + userAgent.getAuthenticatedUser());	
 	}
 	
 	// trigger aspect function on @annotation requestMapping level
@@ -87,7 +98,11 @@ public class LoggingAspect {
             String parameterName = signature.getParameterNames()[i];
             builder.append(parameterName);
             builder.append(": ");
-            builder.append(joinPoint.getArgs()[i].toString());
+            if(joinPoint.getArgs()[i] != null) {
+            	builder.append(joinPoint.getArgs()[i].toString());
+            }else{
+            	builder.append("");
+            }
             builder.append(", ");
         }
         return builder.toString();
