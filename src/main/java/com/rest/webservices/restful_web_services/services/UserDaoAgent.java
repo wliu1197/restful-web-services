@@ -12,4 +12,5 @@ public interface UserDaoAgent {
 	void deleteById(int id);
 	String getAuthenticatedUser();
 	int getTotalNumberOfPostsByUserDetails(UserDetails user);
+	UserDetails findUserWithBiggestTodoAmount();
 }

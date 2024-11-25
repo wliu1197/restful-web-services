@@ -9,19 +9,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
@@ -35,7 +42,7 @@ import com.rest.webservices.restful_web_services.services.PostDaoAgent;
 import com.rest.webservices.restful_web_services.services.TodoDaoAgent;
 import com.rest.webservices.restful_web_services.services.UserDaoAgent;
 
-
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @RestController
@@ -47,6 +54,15 @@ public class UsersController {
 	private TodoDaoAgent todoAgent;
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
+
+	
+	@GetMapping("/csrf-token")
+	public CsrfToken getCsrfToken(HttpServletRequest request) {
+		//in FilterChain if we don't .csrf(csrf -> csrf.disable())
+		// we can use this function to get a csrf token before we do post/put
+		// so every post/put will be secured with fresh csrf token to prevent csrf
+		return (CsrfToken) request.getAttribute("_csrf");
+	}
 	
 	//dependency injection
 	@Autowired
@@ -205,12 +221,15 @@ public class UsersController {
 	}
 	
 	@PostMapping(path = "/users/{id}/posts")
-	public ResponseEntity<PostDetails> createPostForUser(@RequestBody PostDetails postsDetails, @PathVariable int id){
+	public ResponseEntity<PostDetails> createPostForUser(@RequestBody PostDetails postsDetails
+			, @PathVariable int id){
 		UserDetails userDetails = userAgent.findById(id);
 		if(userDetails == null) {
 			throw new UserNotFoundException("Can't find user by id:" + id);
 		}
-		
+		//make sure even client pass id field in 
+		//we reset it to null so spring data jpa will create new one for us
+		postsDetails.setId(null);
 		postsDetails.setUserDetails(userDetails);
 		postAgent.savePost(postsDetails);
 	
@@ -294,7 +313,9 @@ public class UsersController {
 		if(userDetails == null) {
 			throw new UserNotFoundException("Can't find user by username:" + username);
 		}
-		
+		//make sure even client pass id field in 
+		//we reset it to null so spring data jpa will create new one for us
+		todoRequest.setId(null);
 		todoRequest.setUserDetails(userDetails);
 		todoAgent.saveTodo(todoRequest);
 		
@@ -321,5 +342,22 @@ public class UsersController {
 	}
 	
 	
+	
+	
+	@GetMapping(path = "/o365/getSubscriptions")
+	public JsonNode StringgetO365Subscriptions(@RequestHeader("token") String token) {
+	    String auth = "Bearer " + token;	  
+		RestTemplate restTemplate = new RestTemplateBuilder()
+		.defaultHeader(HttpHeaders.AUTHORIZATION,auth)
+		.build();
+		String uriString = "end point";
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		JsonNode responString = restTemplate.getForObject(uriString, JsonNode.class);
+		System.out.println(responString);
+		
+		return responString;
+	}
 
 }

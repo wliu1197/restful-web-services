@@ -70,4 +70,8 @@ public class UserDaoServiceProxyImpl implements UserDaoAgent {
 		return 0;
 	}
 	
+	@Override
+	public UserDetails findUserWithBiggestTodoAmount() {
+		return null;
+	}
 }

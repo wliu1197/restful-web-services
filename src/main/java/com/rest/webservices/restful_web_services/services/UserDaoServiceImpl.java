@@ -70,8 +70,25 @@ public class UserDaoServiceImpl implements UserDaoAgent{
 		return user.getPostDetailsList().size();
 	}
 	
+	@Override
+	public UserDetails findUserWithBiggestTodoAmount() {
+		List<UserDetails> userList = findAll();
+		UserDetails userWithBiggestAmountOfTodo = null;
+		for(UserDetails user: userList) {
+			if(userWithBiggestAmountOfTodo == null) userWithBiggestAmountOfTodo = user;
+			if(!isNullOrEmpty(user.getTodoDetailsList())
+					&& !isNullOrEmpty(userWithBiggestAmountOfTodo.getTodoDetailsList())
+					&& user.getTodoDetailsList().size() > userWithBiggestAmountOfTodo.getTodoDetailsList().size()) {
+				userWithBiggestAmountOfTodo = user;
+			}
+		}
+		return userWithBiggestAmountOfTodo;
+	}
+		
+	public static boolean isNullOrEmpty( final Collection< ? > c ) {
+	    return c == null || c.isEmpty();
+	}
 	
-
 	
 	/*
 	 * Example of using restTemplate to post request body

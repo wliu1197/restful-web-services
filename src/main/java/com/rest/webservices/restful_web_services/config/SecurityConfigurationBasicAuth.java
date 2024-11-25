@@ -72,11 +72,12 @@ public class SecurityConfigurationBasicAuth {
 		http
 		.cors().and()
 		.csrf(csrf -> csrf.disable())
-		.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-		.authorizeHttpRequests(authz -> authz
-	            .requestMatchers("/rest/**").hasRole("developer") //user developer can access /rest/
-	            .requestMatchers("/test/**").hasAnyRole("developer","tester")
-	            .anyRequest().authenticated()
+		.sessionManagement(sess -> 
+					sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+		.authorizeHttpRequests(authz -> 
+					authz.requestMatchers("/rest/**").hasRole("developer") //user developer can access /rest/
+	            		 .requestMatchers("/test/**").hasAnyRole("developer","tester")
+	            		 .anyRequest().authenticated()
 	            //if we want to premit all
 	          //.anyRequest().permitAll()
         )
