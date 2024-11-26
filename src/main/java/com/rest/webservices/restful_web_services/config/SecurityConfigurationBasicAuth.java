@@ -6,6 +6,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.*;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,15 +18,24 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.config.annotation.*;
 
+import com.rest.webservices.restful_web_services.services.UserDaoAgent;
+
 
 @Configuration
 public class SecurityConfigurationBasicAuth {
 	//Customized response message when Auth failed
 	private AuthenticationEntryPoint authEntryPoint;
 	
+	private UserDaoAgent userDaoAgent;
+	
 	@Autowired
 	public void setAuthEntryPoint(AuthenticationEntryPoint authEntryPoint) {
 		this.authEntryPoint = authEntryPoint;
+	}
+
+	@Autowired
+	public void setUserDaoAgent(@Qualifier("UserDaoService")UserDaoAgent userAgent) {
+		this.userDaoAgent = userAgent;
 	}
 
 	@Bean
@@ -34,13 +44,21 @@ public class SecurityConfigurationBasicAuth {
     }
 	
 	
-	//Configure Basic auth users and keep them in memory user InMemoryUserDetailsManager class
-	//We can get auth from db easily by using spring data jpa repository with our userdetail entity
-	//lazy to do it so hard code 2 users for now :)
-	@Bean
-	public InMemoryUserDetailsManager createDetailsManager() {
-		//users we can get it from DB By repository
+	private List<UserDetails> getUsersFromDB(){
+		List<com.rest.webservices.restful_web_services.model.UserDetails> usersFromDB = userDaoAgent.findAll();
+		List<UserDetails> usersInDB = usersFromDB.stream().map(userFromDB -> {
+			return User.builder()
+					.username(userFromDB.getName())
+					.password(encoder().encode(userFromDB.getPassword()))
+					.roles(userFromDB.getRole())
+					.build();
+		}).collect(Collectors.toList());
+		return usersInDB;
+	}
+	
+	private List<UserDetails> getUsers(){
 		List<UserDetails> users = new ArrayList<UserDetails>();
+		
 		UserDetails developer = User.builder()
 				.username("wen")
 				.password(encoder().encode("comein22"))
@@ -56,6 +74,16 @@ public class SecurityConfigurationBasicAuth {
 			
 		users.add(developer);
 		users.add(tester);
+		return users;
+	}
+	
+	
+	//Configure Basic auth users and keep them in memory user InMemoryUserDetailsManager class
+	//We can get auth from db easily by using spring data jpa repository with our userdetail entity
+	//lazy to do it so hard code 2 users for now :)
+	@Bean
+	public InMemoryUserDetailsManager createDetailsManager() {
+		List<UserDetails> users = getUsersFromDB();
 		return new InMemoryUserDetailsManager(users);
 	}
 	

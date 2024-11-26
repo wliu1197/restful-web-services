@@ -56,13 +56,6 @@ public class UsersController {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	
-	@GetMapping("/csrf-token")
-	public CsrfToken getCsrfToken(HttpServletRequest request) {
-		//in FilterChain if we don't .csrf(csrf -> csrf.disable())
-		// we can use this function to get a csrf token before we do post/put
-		// so every post/put will be secured with fresh csrf token to prevent csrf
-		return (CsrfToken) request.getAttribute("_csrf");
-	}
 	
 	//dependency injection
 	@Autowired
@@ -73,6 +66,15 @@ public class UsersController {
 		this.postAgent = postAgent;
 		this.todoAgent = todoAgent;
 	}
+	
+	@GetMapping("/csrf-token")
+	public CsrfToken getCsrfToken(HttpServletRequest request) {
+		//in FilterChain if we don't .csrf(csrf -> csrf.disable())
+		// we can use this function to get a csrf token before we do post/put
+		// so every post/put will be secured with fresh csrf token to prevent csrf
+		return (CsrfToken) request.getAttribute("_csrf");
+	}
+	
 	
 	@GetMapping(path = "/basic-auth")
 	public ResponseEntity<Void> basicAuthCheckWhenLogin() {
@@ -350,7 +352,7 @@ public class UsersController {
 		RestTemplate restTemplate = new RestTemplateBuilder()
 		.defaultHeader(HttpHeaders.AUTHORIZATION,auth)
 		.build();
-		String uriString = "end point";
+		String uriString = "https://provisioning-api.melbourneit.com.au/v1/sm/o365/subscriptions";
 		
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);

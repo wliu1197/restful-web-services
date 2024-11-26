@@ -22,7 +22,7 @@ public class UserDetailsRepositoryStub implements UserDetailsRepository{
 	
 	@Override
 	public List<UserDetails> findAllActiveUser(){
-		UserDetails userDetails = new UserDetails("wen","comein22",LocalDate.of(1990, 1, 8),36);
+		UserDetails userDetails = new UserDetails("wen","comein22",LocalDate.of(1990, 1, 8),36,"developer");
 		
 		TodoDetails todo1 = new TodoDetails("learn aws", LocalDate.of(2025, 1, 8), false, userDetails);
 		TodoDetails todo2 = new TodoDetails("learn spring", LocalDate.of(2025, 1, 8), false, userDetails);
@@ -31,7 +31,7 @@ public class UserDetailsRepositoryStub implements UserDetailsRepository{
 		wenTodos.add(todo2);
 		userDetails.setTodoDetailsList(wenTodos);
 		
-		UserDetails userDetails2 = new UserDetails("anna","comein22",LocalDate.of(1990, 1, 8),36);
+		UserDetails userDetails2 = new UserDetails("anna","comein22",LocalDate.of(1990, 1, 8),36,"tester");
 		TodoDetails todo3 = new TodoDetails("eat more food", LocalDate.of(2025, 1, 8), false, userDetails2);
 		List<TodoDetails> annaTodos = new ArrayList<TodoDetails>();
 		annaTodos.add(todo3 );

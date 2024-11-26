@@ -37,6 +37,9 @@ public class UserDetails {
 	@Column(name="password")
 	private String password;
 	
+	@Column(name="role")
+	private String role;
+	
 	@Column(name="age")
 	private Integer age;
 	
@@ -62,13 +65,14 @@ public class UserDetails {
 		this.age = age;
 		this.cancelledDate = null;
 	}
-	public UserDetails(String name, String password, LocalDate birthDate, Integer age) {
+	public UserDetails(String name, String password, LocalDate birthDate, Integer age, String role) {
 		super();
 		this.name = name;
 		this.password = password;
 		this.birthDate = birthDate;
 		this.age = age;
 		this.cancelledDate = null;
+		this.role = role;
 	}
 	
 	public UserDetails(Integer id, String name, LocalDate birthDate, Integer age) {
@@ -132,12 +136,23 @@ public class UserDetails {
 	public void setTodoDetailsList(List<TodoDetails> todoDetailsList) {
 		this.todoDetailsList = todoDetailsList;
 	}
+	
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
 
 	@Override
 	public String toString() {
 		return "UserDetails [id=" + id + ", name=" + name + ", birthDate=" + birthDate + ", password=" + password
-				+ ", age=" + age + ", cancelledDate=" + cancelledDate + "]";
+				+ ", role=" + role + ", age=" + age + ", cancelledDate=" + cancelledDate + "]";
 	}
+	
+	
 	
 }
 

@@ -34,8 +34,8 @@ public class SetupDataConfig {
 	@PostConstruct
 	public void setUpSomeTestData() {
 		//set up test data in user table
-		UserDetails userDetails = new UserDetails("wen","comein22",LocalDate.of(1990, 1, 8),36);
-		UserDetails userDetails2 = new UserDetails("anna","comein22",LocalDate.of(1990, 1, 8),36);
+		UserDetails userDetails = new UserDetails("wen","comein22",LocalDate.of(1990, 1, 8),36,"developer");
+		UserDetails userDetails2 = new UserDetails("anna","comein22",LocalDate.of(1990, 1, 8),36,"tester");
 		userDetails = userAgent.saveUser(userDetails);
 		userDetails2 = userAgent.saveUser(userDetails2);
 		
