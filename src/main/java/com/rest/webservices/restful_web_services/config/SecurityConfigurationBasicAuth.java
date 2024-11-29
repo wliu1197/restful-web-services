@@ -8,21 +8,28 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.*;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.config.annotation.*;
 
 import com.rest.webservices.restful_web_services.services.UserDaoAgent;
 
+import jakarta.activation.DataSource;
 
-@Configuration
+
+
+//@Configuration
 public class SecurityConfigurationBasicAuth {
+
 	//Customized response message when Auth failed
 	private AuthenticationEntryPoint authEntryPoint;
 	
@@ -55,6 +62,7 @@ public class SecurityConfigurationBasicAuth {
 		}).collect(Collectors.toList());
 		return usersInDB;
 	}
+	
 	
 	private List<UserDetails> getUsers(){
 		List<UserDetails> users = new ArrayList<UserDetails>();
@@ -114,4 +122,8 @@ public class SecurityConfigurationBasicAuth {
 		
 		return http.build();		
 	}
+	
+	
+	
+	
 }
