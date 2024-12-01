@@ -181,16 +181,22 @@ public class SecurityConfigurationJWTAuth {
 	@Order(Ordered.HIGHEST_PRECEDENCE)
 	@Bean
 	public SecurityFilterChain basicAuthFilterChain(HttpSecurity http) throws Exception {
+		// 1 .cros().and() to allow cross-origin resource sharing so rest api can accept request from our react app
+		// in RestfulWebServicesApplication class I have added WebMvcConfigurer corsConfigurer() to configure that cros
+		// 2 disable csrf(Cross-Site Request Forgery) so we can allow post or put request 
+		//	 as we are using STATELESS not seesion use to store credential info
+		// 3 basic auth with session policy stateless
+		// 4 configure requests to be authenticated for uri path and user role configured in UserDetailsManage
 		http
 		.cors().and()
 		.csrf(csrf -> csrf.disable())
 		.securityMatcher("/jwt/**")
 		.authorizeHttpRequests(authz -> 
-					authz.requestMatchers("/jwt/**").permitAll()
+					authz.requestMatchers("/jwt/**").hasRole("developer")
         )
 		.httpBasic(Customizer.withDefaults())
 		.sessionManagement(sess -> 
-		sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 		.exceptionHandling(ex-> ex.authenticationEntryPoint(authEntryPoint));
 		return http.build();		
 	}
@@ -203,9 +209,10 @@ public class SecurityConfigurationJWTAuth {
 	public SecurityFilterChain jwtFilterChain(HttpSecurity http) throws Exception {
 		// 1 .cros().and() to allow cross-origin resource sharing so rest api can accept request from our react app
 		// in RestfulWebServicesApplication class I have added WebMvcConfigurer corsConfigurer() to configure that cros
-		// 2 disable csrf(Cross-Site Request Forgery) so we can allow post or put request  
-		// 3 set basic auth as stateless
-		// 4 configure requests to be authenticated for uri path and roles users InMemoryUserDetailsManager
+		// 2 disable csrf(Cross-Site Request Forgery) so we can allow post or put request 
+		//	 as we are using STATELESS not seesion use to store credential info
+		// 3 jwt auth with session policy stateless
+		// 4 configure requests to be authenticated for uri path and authority users from token by JwtAuthenticationConverter
 		http
 		.cors().and()
 		.csrf(csrf -> csrf.disable())
