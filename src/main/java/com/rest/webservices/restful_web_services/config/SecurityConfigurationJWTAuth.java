@@ -3,6 +3,7 @@ package com.rest.webservices.restful_web_services.config;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.List;
@@ -129,6 +130,9 @@ public class SecurityConfigurationJWTAuth {
 	//Step 2:generate RSAKey object
 	@Bean
 	public RSAKey rsaKey(KeyPair keyPair) {
+		System.out.println("public key: " + (RSAPublicKey) keyPair.getPublic());
+		System.out.println("private key: " + (RSAPrivateKey) keyPair.getPrivate());
+		
 		return new RSAKey.Builder((RSAPublicKey) keyPair.getPublic())
 					.privateKey(keyPair.getPrivate())
 					.keyID(UUID.randomUUID().toString())
@@ -179,6 +183,18 @@ public class SecurityConfigurationJWTAuth {
 		return http.build();		
 	}
 	
+	//Step 6: use JwtAuthenticationConverter to fetch authentication authority from token claim
+	@Bean
+	public JwtAuthenticationConverter jwtAuthenticationConverter() {
+		final JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+		grantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
+		grantedAuthoritiesConverter.setAuthorityPrefix("");
+		
+		final JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+		return jwtAuthenticationConverter;
+	}
+	
 	
 	/***************** JWT filterChain ***********************/
 	
@@ -207,16 +223,7 @@ public class SecurityConfigurationJWTAuth {
 	
 	}
 	
-	@Bean
-	public JwtAuthenticationConverter jwtAuthenticationConverter() {
-		final JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-		grantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
-		grantedAuthoritiesConverter.setAuthorityPrefix("");
-		
-		final JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
-		return jwtAuthenticationConverter;
-	}
+	
 	
 	
 	

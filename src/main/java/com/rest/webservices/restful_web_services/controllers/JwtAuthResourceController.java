@@ -33,7 +33,7 @@ public class JwtAuthResourceController {
 								.issuedAt(Instant.now())
 								.expiresAt(Instant.now().plusSeconds(60 * 60))
 								.subject(authentication.getName())
-								.claim("roles", getScope(authentication))
+								.claim("roles", getRoles(authentication))
 								.build();
 		JwtEncoderParameters parameters = JwtEncoderParameters.from(claims);
 		String token = jwtEncoder.encode(parameters).getTokenValue();
@@ -46,7 +46,7 @@ public class JwtAuthResourceController {
 		return authentication;
 	}
 	
-	private String getScope(Authentication authentication) {
+	private String getRoles(Authentication authentication) {
 		return authentication.getAuthorities().stream()
 					.map(a -> a.getAuthority())
 					.collect(Collectors.joining(" "));
