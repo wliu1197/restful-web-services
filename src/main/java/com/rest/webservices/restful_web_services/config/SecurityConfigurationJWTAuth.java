@@ -161,6 +161,18 @@ public class SecurityConfigurationJWTAuth {
 	public JwtEncoder jwtEncoder(JWKSource<SecurityContext> jwkSource) {
 		return new NimbusJwtEncoder(jwkSource);
 	}
+	
+	//Step 6: use JwtAuthenticationConverter to fetch authentication authority from token claim
+	@Bean
+	public JwtAuthenticationConverter jwtAuthenticationConverter() {
+		final JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+		grantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
+		grantedAuthoritiesConverter.setAuthorityPrefix("");
+		
+		final JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+		return jwtAuthenticationConverter;
+	}
 	/***************** JWT settings end ***********************/
 	
 	/***************** Basic Auth generate token filterChain ***********************/
@@ -181,18 +193,6 @@ public class SecurityConfigurationJWTAuth {
 		sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 		.exceptionHandling(ex-> ex.authenticationEntryPoint(authEntryPoint));
 		return http.build();		
-	}
-	
-	//Step 6: use JwtAuthenticationConverter to fetch authentication authority from token claim
-	@Bean
-	public JwtAuthenticationConverter jwtAuthenticationConverter() {
-		final JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-		grantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
-		grantedAuthoritiesConverter.setAuthorityPrefix("");
-		
-		final JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
-		return jwtAuthenticationConverter;
 	}
 	
 	
