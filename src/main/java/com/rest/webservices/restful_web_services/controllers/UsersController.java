@@ -344,23 +344,6 @@ public class UsersController {
 		return userAgent.findById(id);
 	}
 	
-	
-	
-	
-	@GetMapping(path = "/o365/getSubscriptions")
-	public JsonNode StringgetO365Subscriptions(@RequestHeader("token") String token) {
-	    String auth = "Bearer " + token;	  
-		RestTemplate restTemplate = new RestTemplateBuilder()
-		.defaultHeader(HttpHeaders.AUTHORIZATION,auth)
-		.build();
-		String uriString = "https://provisioning-api.melbourneit.com.au/v1/sm/o365/subscriptions";
-		
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		JsonNode responString = restTemplate.getForObject(uriString, JsonNode.class);
-		System.out.println(responString);
-		
-		return responString;
-	}
+
 
 }
