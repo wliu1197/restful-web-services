@@ -40,7 +40,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 		return new ResponseEntity(errorDetails,HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
-	//by default validation exceptions doesn't should failed message
+	//by default validation exceptions doesn't show failed message
 	//this is to customize validation exceptions will show failed message in our error dataDetail format
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(
