@@ -219,7 +219,12 @@ public class SecurityConfigurationJWTAuth {
 		.sessionManagement(sess -> 
 					sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 		.authorizeHttpRequests(authz -> 
-					authz.requestMatchers("/rest/**").hasAnyAuthority("ROLE_developer")
+		// ################ AWS Elastic beanstalk related configuration #########################
+		// allowed access to root URI so ELB can do health check
+					authz.requestMatchers("/").permitAll()
+		// ################ AWS Elastic beanstalk related configuration #########################
+					.requestMatchers("/health").permitAll()
+					.requestMatchers("/rest/**").hasAnyAuthority("ROLE_developer")
 					.anyRequest().authenticated()
         )
 		.oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()))

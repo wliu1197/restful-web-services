@@ -21,7 +21,7 @@ public class RestfulWebServicesApplication {
 				registry.addMapping("/**")
 				.allowedHeaders("*")
 				.allowedMethods("*")
-				.allowedOrigins("http://localhost:3000");
+				.allowedOrigins("http://localhost:3000","http://localhost:5000");
 			}
 		};
 	}
