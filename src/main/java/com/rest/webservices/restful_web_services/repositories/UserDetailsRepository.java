@@ -13,6 +13,11 @@ import com.rest.webservices.restful_web_services.model.UserDetails;
 public interface UserDetailsRepository extends JpaRepository<UserDetails, Integer>{
 	List<UserDetails> findByName(String name);
 	
+	//find user by name or id
+	//sql would looks like 
+	//where u1_0.name=? and u1_0.id=?
+	UserDetails findByNameOrId(String name, Integer id);
+	
 	@Query("FROM user_details u WHERE u.id = ?1 and u.cancelledDate is null")
 	UserDetails findActiveUserById(Integer id);
 	

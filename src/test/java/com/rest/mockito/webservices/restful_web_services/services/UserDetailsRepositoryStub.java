@@ -42,7 +42,10 @@ public class UserDetailsRepositoryStub implements UserDetailsRepository{
 		userList.add(userDetails);
 		return userList ;
 	}
-
+	@Override
+	public UserDetails findByNameOrId(String name, Integer id) {
+		return null;
+	}
 	@Override
 	public void flush() {
 		// TODO Auto-generated method stub

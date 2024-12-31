@@ -32,7 +32,7 @@ services:
   volumes:
    - .m2:/root/.m2
    - type: bind
-     source: /Users/wenhaoliu/Desktop/interview preparing/SpringbootUdemy/restful-web-services/target/restful-web-services-0.0.1-SNAPSHOT.jar
+     source: /Users/wenhaoliu/Desktop/interview_preparing/SpringbootUdemy/restful-web-services/target/restful-web-services-0.0.1-SNAPSHOT.jar
      target: /home/app/springboot.jar
 
 networks:
