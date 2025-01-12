@@ -12,7 +12,6 @@ FROM openjdk:17-jdk-slim
 # maven image will build the restful-web-services-0.0.1-SNAPSHOT.jar for us 
 # we can just copy from maven image
 # COPY --from=build /home/app/target/*.jar springboot.jar
-# Identified memeroy issue with maven auto build above will improve it later now let's manual build jar files first
 ADD /target/restful-web-services-0.0.1-SNAPSHOT.jar /home/app/springboot.jar
 EXPOSE 8081
 CMD exec java -jar /home/app/springboot.jar

@@ -1,35 +1,27 @@
 package com.rest.webservices.restful_web_services.controllers;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
@@ -38,7 +30,6 @@ import com.rest.webservices.restful_web_services.exception.UserNotFoundException
 import com.rest.webservices.restful_web_services.model.PostDetails;
 import com.rest.webservices.restful_web_services.model.TodoDetails;
 import com.rest.webservices.restful_web_services.model.UserDetails;
-import com.rest.webservices.restful_web_services.repositories.TodoDetailsRepository;
 import com.rest.webservices.restful_web_services.services.PostDaoAgent;
 import com.rest.webservices.restful_web_services.services.TodoDaoAgent;
 import com.rest.webservices.restful_web_services.services.UserDaoAgent;
@@ -86,9 +77,13 @@ public class UsersController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	
+	//get request body from JWT token subjects,expires and claims by using @AuthenticationPrincipal Jwt principal
 	@GetMapping(path = "/users")
-	public List<UserDetails> getAllUsers() {
+	public List<UserDetails> getAllUsers(@AuthenticationPrincipal Jwt principal) {
+		Map<String, Object>  claims = principal.getClaims();
+		for (Map.Entry<String, Object> entry : claims.entrySet()) {
+			System.out.println(entry.getKey() + "/" + entry.getValue());
+		}
 		//print authenticated Basic auth username
 		logger.info("Basic Auth user: " + userAgent.getAuthenticatedUser());
 		return userAgent.findAll();
@@ -112,7 +107,7 @@ public class UsersController {
 			throw new UserNotFoundException("Can't find user by id:" + id);
 		}
 		EntityModel<UserDetails> userEntityModel = EntityModel.of(userDetails);
-		WebMvcLinkBuilder linkBuilder = linkTo(methodOn(this.getClass()).getAllUsers());
+		WebMvcLinkBuilder linkBuilder = linkTo(methodOn(this.getClass()).getAllUsers(null));
 		userEntityModel.add(linkBuilder.withRel("all-users"));
 		return userEntityModel;
 	}

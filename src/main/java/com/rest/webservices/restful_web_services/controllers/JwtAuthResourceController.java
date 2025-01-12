@@ -34,6 +34,7 @@ public class JwtAuthResourceController {
 								.expiresAt(Instant.now().plusSeconds(60 * 60))
 								.subject(authentication.getName())
 								.claim("roles", getRoles(authentication))
+								.claim("user",authentication.getName())
 								.build();
 		JwtEncoderParameters parameters = JwtEncoderParameters.from(claims);
 		String token = jwtEncoder.encode(parameters).getTokenValue();
