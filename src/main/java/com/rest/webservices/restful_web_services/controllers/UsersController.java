@@ -221,7 +221,7 @@ public class UsersController {
 	@PostMapping(path = "/users/{id}/posts")
 	public ResponseEntity<PostDetails> createPostForUser(@RequestBody PostDetails postsDetails
 			, @PathVariable int id){
-		UserDetails userDetails = userAgent.findById(id);
+	/*	UserDetails userDetails = userAgent.findById(id);
 		if(userDetails == null) {
 			throw new UserNotFoundException("Can't find user by id:" + id);
 		}
@@ -229,8 +229,8 @@ public class UsersController {
 		//we reset it to null so spring data jpa will create new one for us
 		postsDetails.setId(null);
 		postsDetails.setUserDetails(userDetails);
-		postAgent.savePost(postsDetails);
-	
+		postAgent.savePost(postsDetails);*/
+		postAgent.createPostByUserId(id,postsDetails);
 		return new ResponseEntity<PostDetails> (postsDetails,HttpStatus.CREATED);
 	}
 	

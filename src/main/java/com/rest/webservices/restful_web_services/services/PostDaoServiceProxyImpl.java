@@ -12,8 +12,10 @@ import com.rest.webservices.restful_web_services.repositories.UserDetailsReposit
 @Service
 @Qualifier("PostDaoServiceProxy")
 public class PostDaoServiceProxyImpl implements PostDaoAgent{
-		
-	
+
+	public PostDetails createPostByUserId(int id,PostDetails postsDetails){
+		return null;
+	}
 	public PostDetails savePost(PostDetails post) {
 		return new PostDetails();
 	}
