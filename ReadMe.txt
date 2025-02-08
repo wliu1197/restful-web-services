@@ -9,6 +9,9 @@ docker exec -it mysql-social-media bash
 mysql -u root -p social-media-database
 password:dummypassword
 
+show databases; # lists all databases
+use information_schema; # connect to the mysql schema
+show tables;
 
 
 Once mysql is in docker container
