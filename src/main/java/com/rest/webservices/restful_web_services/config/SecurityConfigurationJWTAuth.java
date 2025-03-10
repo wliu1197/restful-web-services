@@ -19,6 +19,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
@@ -84,8 +85,6 @@ public class SecurityConfigurationJWTAuth {
 		}).collect(Collectors.toList());
 		return usersInDB;
 	}
-	
-	
 	private List<UserDetails> getUsers(){
 		List<UserDetails> users = new ArrayList<UserDetails>();
 		
@@ -126,10 +125,29 @@ public class SecurityConfigurationJWTAuth {
 		keyPairGenerator.initialize(2048); //key size 2048 bit RSA encryption
 		return keyPairGenerator.generateKeyPair();
 	}
-	
 	//Step 2:generate RSAKey object
 	@Bean
 	public RSAKey rsaKey(KeyPair keyPair) {
+	/*	System.out.println("Convert RSA public key into a string an dvice versa");
+		// generate a RSA key pair
+		KeyPairGenerator keygen = KeyPairGenerator.getInstance("RSA");
+		keygen.initialize(2048, new SecureRandom());
+		KeyPair keyPair = keygen.generateKeyPair();
+		PrivateKey privateKey = keyPair.getPrivate();
+		PublicKey publicKey = keyPair.getPublic();
+		System.out.println("publicKey: " + publicKey);
+		// get encoded form (byte array)
+		byte[] publicKeyByte = publicKey.getEncoded();
+		// Base64 encoded string
+		String publicKeyString = Base64.encodeToString(publicKeyByte, Base64.NO_WRAP);
+		System.out.println("publicKeyString: " + publicKeyString);
+		// ... transport to server
+		// Base64 decoding to byte array
+		byte[] publicKeyByteServer = Base64.decode(publicKeyString, Base64.NO_WRAP);
+		// generate the publicKey
+		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+		PublicKey publicKeyServer = (PublicKey) keyFactory.generatePublic(new X509EncodedKeySpec(publicKeyByteServer));
+		System.out.println("publicKeyServer: " + publicKeyServer);*/
 		System.out.println("public key: " + (RSAPublicKey) keyPair.getPublic());
 		System.out.println("private key: " + (RSAPrivateKey) keyPair.getPrivate());
 		
@@ -188,7 +206,7 @@ public class SecurityConfigurationJWTAuth {
 		// 3 basic auth with session policy stateless
 		// 4 configure requests to be authenticated for uri path and user role configured in UserDetailsManage
 		http
-		.cors().and()
+		.cors(AbstractHttpConfigurer::disable)
 		.csrf(csrf -> csrf.disable())
 		.securityMatcher("/jwt/**")
 		.authorizeHttpRequests(authz -> 
@@ -214,7 +232,8 @@ public class SecurityConfigurationJWTAuth {
 		// 3 jwt auth with session policy stateless
 		// 4 configure requests to be authenticated for uri path and authority users from token by JwtAuthenticationConverter
 		http
-		.cors().and()
+	//	.cors().and()
+		.cors(AbstractHttpConfigurer::disable)
 		.csrf(csrf -> csrf.disable())
 		.sessionManagement(sess -> 
 					sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -224,6 +243,7 @@ public class SecurityConfigurationJWTAuth {
 					authz.requestMatchers("/").permitAll()
 		// ################ AWS Elastic beanstalk related configuration #########################
 					.requestMatchers("/health").permitAll()
+					.requestMatchers("/async/**").permitAll()
 					.requestMatchers("/rest/**").hasAnyAuthority("ROLE_developer")
 					.anyRequest().authenticated()
         )

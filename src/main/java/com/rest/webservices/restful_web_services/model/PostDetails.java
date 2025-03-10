@@ -4,14 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity(name="post_details")
 public class PostDetails {
@@ -28,7 +25,7 @@ public class PostDetails {
 	@JoinColumn(name = "user_id", referencedColumnName = "id")
 	@JsonIgnore
 	private UserDetails userDetails;
-	
+
 	public PostDetails() {
 		super();
 	}

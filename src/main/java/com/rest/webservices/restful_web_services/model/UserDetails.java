@@ -17,7 +17,7 @@ import jakarta.validation.constraints.*;
 
 
 //todo: Map this entity to DB later
-@Entity (name="user_details")
+@Entity (name="user_details") //map to JPQL queries
 public class UserDetails {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

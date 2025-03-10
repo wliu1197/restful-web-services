@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3.8"
 services:
  mysql-social-media:
   image: mysql:latest
@@ -19,6 +19,8 @@ services:
   build: .
   restart: always
   container_name: rest-web-services
+  depends_on:
+   - mysql-social-media
   ports:
    - 8081:8081
   networks:
@@ -27,8 +29,6 @@ services:
    - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-social-media:3306/social-media-database
    - SPRING_DATASOURCE_USERNAME=root
    - SPRING_DATASOURCE_PASSWORD=dummypassword
-  depends_on:
-   - mysql-social-media
   volumes:
    - .m2:/root/.m2
    - type: bind
