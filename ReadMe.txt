@@ -14,6 +14,11 @@ USE social-media-database;
 SHOW tables;
 DESCRIBE student;
 
+show databases; # lists all databases
+use information_schema; # connect to the mysql schema
+show tables;
+
+
 Once mysql is in docker container
 
 
